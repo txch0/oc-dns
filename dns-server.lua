@@ -79,7 +79,7 @@ function load_registries()
 
     if toplevels ~= nil then
         for topLevel in toplevels do
-            local topLevelDir = dns_dir .. "/" .. topLevel, "r
+            local topLevelDir = dns_dir .. "/" .. topLevel
             local file = fs.open(topLevelDir)
             if not file then
                 print("DNS> Failed to open registry file: " .. topLevel)
