@@ -79,31 +79,34 @@ function load_registries()
 
     if toplevels ~= nil then
         for topLevel in toplevels do
-            local file = fs.open(dns_dir .. "/" .. topLevel, "r")
+            local topLevelDir = dns_dir .. "/" .. topLevel, "r
+            local file = fs.open(topLevelDir)
             if not file then
                 print("DNS> Failed to open registry file: " .. topLevel)
                 goto continue
             end
-            local topLevelName = fs.name(topLevel)
-
+            
+            local topLevelName = fs.name(topLevelDir)
             dnsRecords[topLevelName] = {}
 
-            local data = file:read(fs.size(topLevel))
+            local data = file:read(fs.size(topLevelDir))
             local decodedData = encoder.unserialize(data)
             if decodedData ~= nil then
-                for address, domain in pairs(decodedData) do
-                    if dnsRecords[topLevelName][domain.name] ~= nil then
-                        dnsRecords[topLevelName][domain.name][domain.sub] = address
-                    else
-                        dnsRecords[topLevelName][domain.name] = {
-                            [domain.sub] = address
-                        }
-                    end
-
-                    if rdnsRecords[address] ~= nil then
-                        table.insert(rdnsRecords[address], domain.sub .. domain.name .. topLevelName)
-                    else
-                        rdnsRecords[address] = { domain.sub .. domain.name .. topLevelName }
+                for name, subs in pairs(decodedData) do
+                    for sub, address in pairs(subs) do
+                        if dnsRecords[topLevelName][name] ~= nil then
+                            dnsRecords[topLevelName][name][sub] = address
+                        else
+                            dnsRecords[topLevelName][name] = {
+                                [sub] = address
+                            }
+                        end
+    
+                        if rdnsRecords[address] ~= nil then
+                            table.insert(rdnsRecords[address], sub .. "." .. name .. "." .. topLevelName)
+                        else
+                            rdnsRecords[address] = { sub .. "." .. name .. "." .. topLevelName }
+                        end
                     end
                 end
             end
@@ -138,6 +141,8 @@ end
 
 local args = { ... }
 load_registries()
+
+for a, b in pairs(rdnsRecords) do print(a,b) end
 
 if args[1] == "start" then
     startup()
