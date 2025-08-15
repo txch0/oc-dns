@@ -39,8 +39,8 @@ function lookup(domainParts)
 end
 
 function rlookup(address)
+    print(rdnsRecords[address])
     if rdnsRecords[address] == nil then return end
-
     return encoder.serialize(rdnsRecords[address])
 end
 
