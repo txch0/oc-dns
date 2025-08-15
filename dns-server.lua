@@ -39,9 +39,11 @@ function lookup(domainParts)
 end
 
 function rlookup(address)
-    print(rdnsRecords[address], encoder.serialize(rdnsRecords[address]))
     if rdnsRecords[address] == nil then return end
-    return encoder.serialize(rdnsRecords[address])
+    
+    return encoder.serialize({
+        domain = rdnsRecords[address]
+    })
 end
 
 function register(domainParts, address)
@@ -102,11 +104,7 @@ function load_registries()
                             }
                         end
     
-                        if rdnsRecords[address] ~= nil then
-                            table.insert(rdnsRecords[address], sub .. "." .. name .. "." .. topLevelName)
-                        else
-                            rdnsRecords[address] = { sub .. "." .. name .. "." .. topLevelName }
-                        end
+                        rdnsRecords[address] = { sub .. "." .. name .. "." .. topLevelName }
                     end
                 end
             end
