@@ -104,7 +104,7 @@ function load_registries()
                             }
                         end
     
-                        rdnsRecords[address] = { sub .. "." .. name .. "." .. topLevelName }
+                        rdnsRecords[address] = sub .. "." .. name .. "." .. topLevelName
                     end
                 end
             end
