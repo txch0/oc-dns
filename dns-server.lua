@@ -79,7 +79,11 @@ function load_registries()
 
     if toplevels ~= nil then
         for topLevel in toplevels do
-            local file = fs.open(topLevel)
+            local file = fs.open(dns_dir .. "/" .. topLevel, "r")
+            if not file then
+                print("DNS> Failed to open registry file: " .. topLevel)
+                goto continue
+            end
             local topLevelName = fs.name(topLevel)
 
             dnsRecords[topLevelName] = {}
@@ -104,6 +108,7 @@ function load_registries()
                 end
             end
             file:close()
+            ::continue::
         end
     end
 end
